@@ -6,11 +6,20 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, Star, Clock, Scissors, Info, Smartphone, CheckCircle2, UserCheck } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Search, MapPin, Star, Clock, Scissors, Info, Smartphone, CheckCircle2, UserCheck, Navigation } from 'lucide-react';
 import { useCollection, useUser, useFirestore } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import Image from 'next/image';
 import Link from 'next/link';
+
+const POPULAR_AREAS = [
+  "Bollywood Square",
+  "Andheri West",
+  "Bandra Junction",
+  "Retro Lane",
+  "Marine Drive"
+];
 
 export default function Home() {
   const { user } = useUser();
@@ -25,7 +34,15 @@ export default function Home() {
   const rankedShops = useMemo(() => {
     if (!shops) return [];
     
-    return [...shops]
+    let filtered = [...shops];
+    if (searchQuery) {
+      filtered = filtered.filter(s => 
+        s.shopName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        s.address.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return filtered
       .sort((a, b) => {
         // First priority: Availability
         if (a.isAvailable !== b.isAvailable) {
@@ -49,27 +66,35 @@ export default function Home() {
         return 0; 
       })
       .slice(0, 3); // Show only top 3 barbers as requested
-  }, [shops]);
+  }, [shops, searchQuery]);
+
+  const handleAreaClick = (area: string) => {
+    setSearchQuery(area);
+  };
 
   return (
     <main className="min-h-screen flex flex-col">
       <Header />
       
       {/* Hero Search */}
-      <section className="bg-secondary text-secondary-foreground py-20 px-4">
-        <div className="container mx-auto text-center max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-headline font-black mb-6">
+      <section className="bg-secondary text-secondary-foreground py-16 md:py-24 px-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -mr-48 -mt-48" />
+        <div className="container mx-auto text-center max-w-3xl relative z-10">
+          <Badge className="mb-4 bg-primary/20 text-primary border-primary/20 hover:bg-primary/30 px-4 py-1 rounded-full">
+            India's First Location-Priority Marketplace
+          </Badge>
+          <h1 className="text-4xl md:text-6xl font-headline font-black mb-6 leading-tight">
             Find Your Next <span className="text-primary italic">Legendary Cut</span>
           </h1>
-          <p className="text-lg opacity-80 mb-8">
+          <p className="text-lg opacity-80 mb-10 max-w-2xl mx-auto">
             The simplest way to discover top-rated barbers near you. 
-            Ranked by availability, quality, and distance.
+            Ranked by availability, quality, and your current location.
           </p>
           
-          <div className="relative max-w-xl mx-auto">
+          <div className="relative max-w-xl mx-auto mb-6">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
             <Input 
-              className="h-14 pl-12 pr-32 rounded-full text-foreground bg-white border-none shadow-xl"
+              className="h-14 pl-12 pr-32 rounded-full text-foreground bg-white border-none shadow-2xl focus-visible:ring-primary"
               placeholder="Enter your location or area..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -78,18 +103,37 @@ export default function Home() {
               Find Barbers
             </Button>
           </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
+            <span className="text-secondary-foreground/60 font-medium mr-2">Quick Suggestions:</span>
+            {POPULAR_AREAS.map((area) => (
+              <button
+                key={area}
+                onClick={() => handleAreaClick(area)}
+                className="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition-colors border border-white/5"
+              >
+                {area}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Featured Recommendations */}
-      <section className="py-16 container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+      <section className="py-20 container mx-auto px-4">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <h2 className="text-2xl font-headline font-bold text-secondary">Top Recommendations</h2>
-            <p className="text-muted-foreground text-sm">Priority ranked: Availability, Rating, and Distance</p>
+            <div className="flex items-center gap-2 mb-2 text-primary">
+              <Navigation className="w-5 h-5 fill-current" />
+              <span className="text-xs font-black uppercase tracking-widest">Priority Ranking</span>
+            </div>
+            <h2 className="text-3xl font-headline font-black text-secondary">
+              {searchQuery ? `Top Barbers in ${searchQuery}` : "Recommended for You"}
+            </h2>
+            <p className="text-muted-foreground">Availability &bull; Top Rating &bull; Proximity</p>
           </div>
           <Link href="/auth">
-            <Button variant="outline" className="rounded-full">View All</Button>
+            <Button variant="outline" className="rounded-full px-8 h-12 border-primary/20 text-primary hover:bg-primary/5">View All Shops</Button>
           </Link>
         </div>
 
@@ -106,18 +150,18 @@ export default function Home() {
         ) : (
           <div className="text-center py-20 bg-accent/20 rounded-3xl border-2 border-dashed border-primary/20">
             <Scissors className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <h3 className="text-xl font-bold text-secondary">No barbers found in this area yet</h3>
-            <p className="text-muted-foreground">Try searching for a different location or check back later.</p>
+            <h3 className="text-xl font-bold text-secondary">No barbers found in {searchQuery || "this area"}</h3>
+            <p className="text-muted-foreground">Try selecting one of our popular suggestions above.</p>
           </div>
         )}
       </section>
 
       {/* Steps Section */}
-      <section className="py-16 bg-white border-y border-border">
+      <section className="py-20 bg-white border-y border-border">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-headline font-bold text-secondary">How to get your haircut</h2>
-            <p className="text-muted-foreground">Follow these 4 simple steps to look like a hero</p>
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-headline font-black text-secondary">How to get your haircut</h2>
+            <p className="text-muted-foreground mt-2">Follow these 4 simple steps to look like a hero</p>
           </div>
           
           <div className="grid md:grid-cols-4 gap-8">
@@ -125,7 +169,7 @@ export default function Home() {
               icon={<Search className="w-8 h-8 text-primary" />} 
               number="01"
               title="Search" 
-              description="Enter your area to find the best barbers ranked by proximity and rating."
+              description="Enter your area to find the best barbers ranked by location and availability."
             />
             <StepItem 
               icon={<Smartphone className="w-8 h-8 text-primary" />} 
@@ -137,30 +181,29 @@ export default function Home() {
               icon={<UserCheck className="w-8 h-8 text-primary" />} 
               number="03"
               title="Select Shop" 
-              description="Choose a shop that is 'Available Now' for immediate service or book ahead."
+              description="Choose a shop that is 'Available Now' to skip the waiting line."
             />
             <StepItem 
               icon={<CheckCircle2 className="w-8 h-8 text-primary" />} 
               number="04"
               title="Transform" 
-              description="Visit the salon, enjoy the retro vibes, and walk out looking legendary."
+              description="Visit the salon, enjoy the vibes, and walk out looking legendary."
             />
           </div>
         </div>
       </section>
 
       {/* Transparent Pricing & Promotion Info */}
-      <section className="bg-primary/10 py-12">
+      <section className="bg-primary/5 py-12">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-6 bg-white p-8 rounded-[2rem] shadow-sm border border-primary/20">
-            <div className="bg-primary/20 p-4 rounded-2xl">
-              <Info className="w-8 h-8 text-primary" />
+          <div className="flex flex-col md:flex-row items-center gap-6 bg-white p-8 rounded-[2.5rem] shadow-sm border border-primary/10">
+            <div className="bg-primary/10 p-5 rounded-2xl">
+              <Info className="w-10 h-10 text-primary" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-secondary">Transparent Payment System</h3>
-              <p className="text-muted-foreground text-sm max-w-2xl">
-                We ensure full transparency. You see the original price and any marketplace discounts upfront. 
-                As a startup business, we often subsidize the first few cuts to help you find your lifelong barber!
+              <h3 className="text-2xl font-black text-secondary mb-2">Transparent Payment System</h3>
+              <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
+                We believe in full transparency. As a startup, we often subsidize the first few cuts from our own pocket to help you find your lifelong barber. You'll always see the original price and the final amount you pay, with no hidden charges.
               </p>
             </div>
           </div>
@@ -168,16 +211,16 @@ export default function Home() {
       </section>
 
       {/* Merchant CTA */}
-      <section className="bg-accent/30 py-16 border-y border-primary/10">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-8">
+      <section className="bg-secondary/5 py-20 border-y border-primary/5">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-10">
           <div className="max-w-xl">
-            <h2 className="text-3xl font-headline font-bold text-secondary mb-4">Are you a Barber?</h2>
-            <p className="text-muted-foreground">
-              Join the AapakaNai marketplace. Grow your business, manage your queue, and build your reputation with transparent payments and separate login management.
+            <h2 className="text-4xl font-headline font-black text-secondary mb-4 text-center md:text-left">Are you a Barber?</h2>
+            <p className="text-muted-foreground text-center md:text-left text-lg">
+              Join the AapakaNai marketplace. Grow your business, manage your queue with our AI tools, and build your reputation with guaranteed transparent payments.
             </p>
           </div>
           <Link href="/auth?role=barber">
-            <Button size="lg" className="rounded-full bg-secondary hover:bg-secondary/90 px-8">
+            <Button size="lg" className="rounded-full bg-secondary hover:bg-secondary/90 px-10 h-14 text-lg font-bold shadow-xl">
               Register Your Shop
             </Button>
           </Link>
@@ -191,17 +234,17 @@ export default function Home() {
 
 function StepItem({ icon, number, title, description }: { icon: React.ReactNode, number: string, title: string, description: string }) {
   return (
-    <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-3xl hover:bg-accent/50 transition-colors">
+    <div className="flex flex-col items-center text-center space-y-4 p-8 rounded-[2rem] hover:bg-accent/50 transition-all duration-300 border border-transparent hover:border-primary/10">
       <div className="relative">
-        <div className="w-16 h-16 bg-accent rounded-2xl flex items-center justify-center">
+        <div className="w-20 h-20 bg-accent rounded-[1.5rem] flex items-center justify-center shadow-inner">
           {icon}
         </div>
-        <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-white">
+        <span className="absolute -top-3 -right-3 bg-primary text-white text-[12px] font-black w-8 h-8 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
           {number}
         </span>
       </div>
-      <h3 className="text-xl font-bold text-secondary">{title}</h3>
-      <p className="text-sm text-muted-foreground">{description}</p>
+      <h3 className="text-xl font-black text-secondary">{title}</h3>
+      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -211,57 +254,54 @@ function ShopCard({ shop }: { shop: any }) {
   const distance = useMemo(() => (Math.random() * 5).toFixed(1), [shop.id]);
 
   return (
-    <div className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-shadow border border-border group">
-      <div className="relative h-48 bg-muted">
+    <div className="bg-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-border group">
+      <div className="relative h-56 bg-muted">
         <Image 
           src={shop.imageUrl || `https://picsum.photos/seed/${shop.id}/600/400`}
           alt={shop.shopName}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
         />
+        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
         {shop.isAvailable ? (
-          <div className="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-lg">
-            <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+          <div className="absolute top-4 right-4 bg-green-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-full flex items-center gap-2 shadow-lg z-10">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
             AVAILABLE NOW
           </div>
         ) : (
-          <div className="absolute top-4 right-4 bg-gray-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-lg">
+          <div className="absolute top-4 right-4 bg-gray-600/90 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg z-10 backdrop-blur-sm">
             BUSY / CLOSED
           </div>
         )}
-      </div>
-      <div className="p-6">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-xl font-headline font-bold text-secondary">{shop.shopName}</h3>
-          <div className="flex items-center gap-1 bg-accent px-2 py-1 rounded-lg">
-            <Star className="w-3 h-3 fill-primary text-primary" />
-            <span className="text-xs font-bold">{shop.rating || 'New'}</span>
-          </div>
+        <div className="absolute bottom-4 left-4 z-10">
+           <Badge className="bg-white/90 text-secondary border-none backdrop-blur-sm text-[10px] font-black px-3 py-1">
+             <MapPin className="w-3 h-3 mr-1 text-primary" />
+             {distance} KM
+           </Badge>
         </div>
-        
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
-            <MapPin className="w-4 h-4 text-primary" />
-            <span>{shop.address}</span>
+      </div>
+      <div className="p-8">
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="text-2xl font-headline font-black text-secondary leading-tight group-hover:text-primary transition-colors">{shop.shopName}</h3>
+            <p className="text-muted-foreground text-xs mt-1">{shop.address}</p>
           </div>
-          <div className="flex items-center gap-2 text-xs font-bold text-primary">
-            <Clock className="w-3 h-3" />
-            <span>{distance} km away</span>
+          <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/10">
+            <Star className="w-4 h-4 fill-primary text-primary" />
+            <span className="text-sm font-black text-secondary">{shop.rating || 'New'}</span>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center justify-between pt-6 border-t border-dashed">
           <div>
-            <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Starts From</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground mb-1">Pricing</p>
             <div className="flex items-center gap-2">
-              <p className="text-lg font-bold text-secondary">₹{shop.services?.[0]?.price || '100'}</p>
-              {shop.hasDiscount && (
-                <span className="text-[10px] bg-primary/20 text-primary px-1 rounded font-bold">DISCOUNTED</span>
-              )}
+              <p className="text-2xl font-black text-secondary">₹{shop.services?.[0]?.price || '100'}</p>
+              <Badge className="bg-primary/10 text-primary text-[9px] border-none px-2">SUBSIDIZED</Badge>
             </div>
           </div>
           <Link href={`/shop/${shop.id}`}>
-            <Button size="sm" className="rounded-full px-6">Book Now</Button>
+            <Button className="rounded-full px-8 h-12 font-bold shadow-lg bg-secondary hover:bg-primary transition-colors">Book Now</Button>
           </Link>
         </div>
       </div>
