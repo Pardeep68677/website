@@ -14,13 +14,13 @@ export function FirebaseClientProvider({ children }: { children: React.ReactNode
     setFirebase(instances);
   }, []);
 
-  if (!firebase) return null;
-
+  // Ensure we always render children even if Firebase isn't ready
+  // We pass nulls if firebase instance couldn't be created
   return (
     <FirebaseProvider
-      app={firebase.app}
-      firestore={firebase.firestore}
-      auth={firebase.auth}
+      app={firebase?.app || null as any}
+      firestore={firebase?.firestore || null as any}
+      auth={firebase?.auth || null as any}
     >
       <FirebaseErrorListener />
       {children}

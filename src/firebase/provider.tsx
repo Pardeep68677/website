@@ -7,9 +7,9 @@ import { Firestore } from 'firebase/firestore';
 import { Auth } from 'firebase/auth';
 
 interface FirebaseContextType {
-  app: FirebaseApp;
-  firestore: Firestore;
-  auth: Auth;
+  app: FirebaseApp | null;
+  firestore: Firestore | null;
+  auth: Auth | null;
 }
 
 const FirebaseContext = createContext<FirebaseContextType | null>(null);
@@ -21,9 +21,9 @@ export function FirebaseProvider({
   auth,
 }: {
   children: React.ReactNode;
-  app: FirebaseApp;
-  firestore: Firestore;
-  auth: Auth;
+  app: FirebaseApp | null;
+  firestore: Firestore | null;
+  auth: Auth | null;
 }) {
   return (
     <FirebaseContext.Provider value={{ app, firestore, auth }}>
@@ -34,8 +34,8 @@ export function FirebaseProvider({
 
 export const useFirebase = () => {
   const context = useContext(FirebaseContext);
-  if (!context) throw new Error('useFirebase must be used within a FirebaseProvider');
-  return context;
+  // Relaxing the throw to allow rendering during mock/development
+  return context || { app: null, firestore: null, auth: null };
 };
 
 export const useFirebaseApp = () => useFirebase().app;
