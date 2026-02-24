@@ -1,0 +1,41 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-retro-salon",
+      "description": "A classic retro barber shop with vintage chairs and mirrors",
+      "imageUrl": "https://picsum.photos/seed/88/1200/600",
+      "imageHint": "retro barbershop vintage"
+    },
+    {
+      "id": "bollywood-style-1",
+      "description": "Classic Bollywood hero inspired hairstyle",
+      "imageUrl": "https://picsum.photos/seed/12/600/800",
+      "imageHint": "indian actor hairstyle"
+    },
+    {
+      "id": "bollywood-style-2",
+      "description": "Vintage Indian film star grooming",
+      "imageUrl": "https://picsum.photos/seed/34/600/800",
+      "imageHint": "retro bollywood man"
+    },
+    {
+      "id": "fauji-cut",
+      "description": "Military style high and tight haircut",
+      "imageUrl": "https://picsum.photos/seed/56/600/800",
+      "imageHint": "military haircut man"
+    },
+    {
+      "id": "fire-cutting",
+      "description": "Professional fire cutting technique demonstration",
+      "imageUrl": "https://picsum.photos/seed/77/600/400",
+      "imageHint": "fire haircut"
+    },
+    {
+      "id": "shaving-ritual",
+      "description": "Traditional hot towel shave",
+      "imageUrl": "https://picsum.photos/seed/99/600/400",
+      "imageHint": "traditional shave"
+    }
+  ]
+}
