@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from 'react';
@@ -39,15 +38,15 @@ export const Footer = () => {
             <ul className="space-y-4 text-secondary-foreground/70">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary shrink-0" />
-                <span>123, Retro Lane, Bollywood Square, Mumbai - 400001</span>
+                <span>swami vivekand nagar,suratgah</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                <span>+91 98765 43210</span>
+                <span>+91 95302 77759</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <span>hello@aapakanai.in</span>
+                <span>pardeepswami68677@gmail.com</span>
               </li>
             </ul>
           </div>
