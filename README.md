@@ -12,24 +12,14 @@ AapakaNai is a location-priority barber marketplace designed for the modern Indi
   - **Customers**: Secure login via Phone/OTP and easy booking discovery.
 - **Transparent Pricing**: Clear breakdown of service costs and subsidized discounts for new users.
 
-## Tech Stack
+## How to Run Locally
 
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: Tailwind CSS + Shadcn UI
-- **Backend**: Firebase (Auth, Firestore)
-- **AI**: Genkit with Google Gemini 2.5 Flash
-- **Icons**: Lucide React + Custom Barber SVGs
-
-## Local Setup
-
-If you have downloaded this project as a ZIP, follow these steps to run it locally:
-
-1. **Install Dependencies**:
+1. **Extract the ZIP**: Unzip the downloaded file into a folder on your computer.
+2. **Install Dependencies**:
    ```bash
    npm install
    ```
-
-2. **Configure Environment Variables**:
+3. **Configure Environment Variables**:
    Create a `.env` file in the root and add your Firebase and Gemini API keys:
    ```env
    NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
@@ -37,16 +27,19 @@ If you have downloaded this project as a ZIP, follow these steps to run it local
    NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
    GEMINI_API_KEY=your_gemini_api_key
    ```
-
-3. **Run Development Server**:
+4. **Run Development Server**:
    ```bash
    npm run dev
    ```
+   The app will be available at `http://localhost:3000`.
 
-4. **Run Genkit Dev UI** (for AI testing):
-   ```bash
-   npm run genkit:dev
-   ```
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS + Shadcn UI
+- **Backend**: Firebase (Auth, Firestore)
+- **AI**: Genkit with Google Gemini 2.5 Flash
+- **Icons**: Lucide React + Custom Barber SVGs
 
 ## Marketplace Strategy
 
