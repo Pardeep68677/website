@@ -1,4 +1,3 @@
-
 'use client';
 
 import React from 'react';
@@ -35,7 +34,7 @@ export const Header = () => {
           {!user ? (
             <div className="flex items-center gap-4">
               <Link href="/auth">
-                <Button variant="ghost" className="text-sm font-medium">Login</Button>
+                <Button variant="ghost" className="text-sm font-medium">Customer Login</Button>
               </Link>
               <Link href="/auth?role=barber">
                 <Button className="px-6 bg-secondary text-secondary-foreground rounded-full text-sm font-bold shadow-lg hover:scale-105 transition-transform">
