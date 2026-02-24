@@ -3,6 +3,11 @@
 import { useState, useMemo } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { Services } from '@/components/Services';
+import { Gallery } from '@/components/Gallery';
+import { QueuePredictor } from '@/components/QueuePredictor';
+import { Reviews } from '@/components/Reviews';
+import { ChatAssistant } from '@/components/ChatAssistant';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -119,7 +124,7 @@ export default function Home() {
       </section>
 
       {/* Featured Recommendations */}
-      <section className="py-20 container mx-auto px-4">
+      <section id="explore" className="py-20 container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2 text-primary">
@@ -170,6 +175,9 @@ export default function Home() {
         )}
       </section>
 
+      {/* Services Section */}
+      <Services />
+
       {/* Steps Section */}
       <section className="py-20 bg-white border-y border-border">
         <div className="container mx-auto px-4">
@@ -207,6 +215,15 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      <Gallery />
+
+      {/* Queue Predictor Section */}
+      <QueuePredictor />
+
+      {/* Reviews Section */}
+      <Reviews />
+
       {/* Transparent Pricing & Promotion Info */}
       <section className="bg-primary/5 py-12">
         <div className="container mx-auto px-4">
@@ -242,6 +259,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      <ChatAssistant />
     </main>
   );
 }
