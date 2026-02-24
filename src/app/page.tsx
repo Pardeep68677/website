@@ -6,7 +6,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, Star, Clock, Scissors, Info } from 'lucide-react';
+import { Search, MapPin, Star, Clock, Scissors, Info, Smartphone, CheckCircle2, UserCheck } from 'lucide-react';
 import { useCollection, useUser, useFirestore } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import Image from 'next/image';
@@ -46,10 +46,9 @@ export default function Home() {
           return reviewsB - reviewsA;
         }
 
-        // Fourth priority: Distance (randomly simulated for now)
         return 0; 
       })
-      .slice(0, 3); // Show only top 2-3 barbers
+      .slice(0, 3); // Show only top 3 barbers as requested
   }, [shops]);
 
   return (
@@ -113,6 +112,43 @@ export default function Home() {
         )}
       </section>
 
+      {/* Steps Section */}
+      <section className="py-16 bg-white border-y border-border">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-headline font-bold text-secondary">How to get your haircut</h2>
+            <p className="text-muted-foreground">Follow these 4 simple steps to look like a hero</p>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-8">
+            <StepItem 
+              icon={<Search className="w-8 h-8 text-primary" />} 
+              number="01"
+              title="Search" 
+              description="Enter your area to find the best barbers ranked by proximity and rating."
+            />
+            <StepItem 
+              icon={<Smartphone className="w-8 h-8 text-primary" />} 
+              number="02"
+              title="Verify" 
+              description="Quick login with your phone number and OTP for a secure experience."
+            />
+            <StepItem 
+              icon={<UserCheck className="w-8 h-8 text-primary" />} 
+              number="03"
+              title="Select Shop" 
+              description="Choose a shop that is 'Available Now' for immediate service or book ahead."
+            />
+            <StepItem 
+              icon={<CheckCircle2 className="w-8 h-8 text-primary" />} 
+              number="04"
+              title="Transform" 
+              description="Visit the salon, enjoy the retro vibes, and walk out looking legendary."
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Transparent Pricing & Promotion Info */}
       <section className="bg-primary/10 py-12">
         <div className="container mx-auto px-4">
@@ -150,6 +186,23 @@ export default function Home() {
 
       <Footer />
     </main>
+  );
+}
+
+function StepItem({ icon, number, title, description }: { icon: React.ReactNode, number: string, title: string, description: string }) {
+  return (
+    <div className="flex flex-col items-center text-center space-y-4 p-6 rounded-3xl hover:bg-accent/50 transition-colors">
+      <div className="relative">
+        <div className="w-16 h-16 bg-accent rounded-2xl flex items-center justify-center">
+          {icon}
+        </div>
+        <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center border-2 border-white">
+          {number}
+        </span>
+      </div>
+      <h3 className="text-xl font-bold text-secondary">{title}</h3>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
   );
 }
 
