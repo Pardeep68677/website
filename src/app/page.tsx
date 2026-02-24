@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useMemo } from 'react';
@@ -7,7 +6,7 @@ import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Search, MapPin, Star, Clock, Scissors, Info, Smartphone, CheckCircle2, UserCheck, Navigation } from 'lucide-react';
+import { Search, MapPin, Star, Clock, Scissors, Info, Smartphone, CheckCircle2, UserCheck, Navigation, Sparkles } from 'lucide-react';
 import { useCollection, useUser, useFirestore } from '@/firebase';
 import { collection } from 'firebase/firestore';
 import Image from 'next/image';
@@ -138,8 +137,23 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-20">
-            <Clock className="animate-spin w-8 h-8 text-primary" />
+          <div className="grid md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-border/50 p-8 space-y-6 animate-pulse">
+                <div className="h-48 bg-muted rounded-2xl w-full" />
+                <div className="space-y-3">
+                  <div className="h-8 bg-muted rounded-lg w-3/4" />
+                  <div className="h-4 bg-muted rounded-lg w-1/2" />
+                </div>
+                <div className="pt-6 border-t border-dashed flex justify-between items-center">
+                   <div className="space-y-2">
+                     <div className="h-3 bg-muted rounded w-12" />
+                     <div className="h-6 bg-muted rounded w-16" />
+                   </div>
+                   <div className="h-12 bg-muted rounded-full w-28" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : rankedShops.length > 0 ? (
           <div className="grid md:grid-cols-3 gap-8">
