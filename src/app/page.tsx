@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Services } from '@/components/Services';
@@ -282,8 +282,12 @@ function StepItem({ icon, number, title, description }: { icon: React.ReactNode,
 }
 
 function ShopCard({ shop }: { shop: any }) {
-  // Simulated distance for prototype
-  const distance = useMemo(() => (Math.random() * 5).toFixed(1), [shop.id]);
+  // Use state and useEffect for random values to avoid hydration mismatch
+  const [distance, setDistance] = useState<string>('0.0');
+
+  useEffect(() => {
+    setDistance((Math.random() * 5).toFixed(1));
+  }, [shop.id]);
 
   return (
     <div className="bg-white rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 border border-border group">

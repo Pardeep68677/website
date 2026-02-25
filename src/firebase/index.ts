@@ -1,18 +1,21 @@
-
 'use client';
 
-import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
-import { getAuth, Auth } from 'firebase/auth';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from './config';
 
 export function initializeFirebase() {
   try {
-    // Check if we have at least a placeholder-like API key to prevent SDK crash
-    const hasValidConfig = firebaseConfig.apiKey && firebaseConfig.apiKey !== 'placeholder-api-key' && firebaseConfig.apiKey !== 'undefined';
+    // Robust check for valid configuration
+    const isMock = !firebaseConfig.apiKey || 
+                   firebaseConfig.apiKey === 'placeholder-api-key' || 
+                   firebaseConfig.apiKey === 'undefined';
     
-    if (!hasValidConfig) {
-      console.warn("Firebase configuration is missing or invalid. Using mock mode.");
+    if (isMock) {
+      if (typeof window !== 'undefined') {
+        console.warn("Firebase configuration is missing or invalid. Application is running in mock mode.");
+      }
       return { app: null as any, firestore: null as any, auth: null as any };
     }
 
@@ -21,7 +24,9 @@ export function initializeFirebase() {
     const auth = getAuth(app);
     return { app, firestore, auth };
   } catch (e) {
-    console.warn("Firebase initialization failed:", e);
+    if (typeof window !== 'undefined') {
+      console.warn("Firebase initialization failed. Falling back to mock mode:", e);
+    }
     return { app: null as any, firestore: null as any, auth: null as any };
   }
 }
